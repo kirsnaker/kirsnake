@@ -2,6 +2,7 @@
   width:500px;
   height:50px;
   border:5px solid #818181;
+  position: fixed;
 }
 
 .item {
