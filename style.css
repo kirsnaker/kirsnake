@@ -1,1 +1,12 @@
+a {
+  font-size: 40px;
+  text-decoration: none;
+  color: green;
+}
 
+a:hover {
+  color: white;
+}
+body {
+   background: black
+}
