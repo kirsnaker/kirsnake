@@ -60,7 +60,8 @@ body {
 }
 
 
-.ahref1 a {
-font-size:"100px"
+.href1 {
+font-size:"30px";
 text-decoration: none;
+color: green;
 }
