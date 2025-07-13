@@ -1,0 +1,47 @@
+/* Основные стили (как в предыдущем ответе) */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #4caf50;
+  padding: 1rem;
+  text-align: center;
+  color: white;
+}
+
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input, button, select {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #4caf50;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
