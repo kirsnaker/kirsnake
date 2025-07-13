@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор | Kirsnake</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/calculator.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Kirsnake</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="qr.html">QR-генератор</a>
+            <a href="random.html">Генератор чисел</a>
+            <a href="calculator.html">Калькулятор</a>
+            <a href="currency.html">Курсы валют</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Калькулятор</h2>
+        <div class="input-group">
+            <input type="number" id="num1" placeholder="Число 1">
+            <select id="operator">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">×</option>
+                <option value="/">÷</option>
+            </select>
+            <input type="number" id="num2" placeholder="Число 2">
+            <button id="calculate">Вычислить</button>
+        </div>
+        <p id="result">Результат: </p>
+    </div>
+</body>
+</html>
