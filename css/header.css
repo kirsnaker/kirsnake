@@ -1,0 +1,182 @@
+
+        :root {
+            --primary: #4caf50;
+            --primary-light: #81c784;
+            --primary-dark: #388e3c;
+            --text: #2e7d32;
+            --error: #d32f2f;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background-color: white;
+            line-height: 1.6;
+        }
+
+        /* Шапка */
+        header {
+            background-color: var(--primary);
+            padding: 1rem;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            align-items: center;
+        }
+
+        nav a, .dropbtn {
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        nav a:hover, .dropbtn:hover {
+            text-decoration: underline;
+        }
+
+        /* Выпадающее меню */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Стрелка ▼ */
+        .dropbtn::after {
+            content: "▼";
+            font-size: 0.6rem;
+            margin-left: 5px;
+            position: relative;
+            top: -1px;
+        }
+
+        /* Выпадающий список */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--primary-dark);
+            min-width: 160px;
+            z-index: 100;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            padding: 0.8rem 1.2rem;
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--primary);
+        }
+
+        /* Основное содержимое */
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .input-group {
+            margin: 1.5rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border: 1px solid var(--primary-light);
+            border-radius: 4px;
+            font-size: 1rem;
+            flex: 1 1 200px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            min-width: 120px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        #result {
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        /* Десктопная версия */
+        @media (min-width: 769px) {
+            .header-content {
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+            .logo {
+                margin-bottom: 0;
+                margin-right: 2rem;
+            }
+
+            nav {
+                justify-content: flex-start;
+                flex-grow: 1;
+            }
+        }
+    

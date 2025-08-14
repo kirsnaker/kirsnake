@@ -1,0 +1,155 @@
+/* Добавляем в существующие стили */
+
+
+/* Основные стили */
+:root {
+    --primary: #4caf50;
+    --primary-light: #81c784;
+    --primary-dark: #388e3c;
+    --text: #2e7d32;
+    --error: #d32f2f;
+}
+
+      :root {
+            --primary: #4caf50;
+            --primary-light: #81c784;
+            --primary-dark: #388e3c;
+            --text: #2e7d32;
+            --error: #d32f2f;
+        }
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+
+
+h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+input, select, button {
+    padding: 10px;
+    border: 1px solid var(--primary-light);
+    border-radius: 4px;
+    font-size: 1rem;
+    flex: 1 1 200px;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    min-width: 120px;
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+}
+
+#result, #crypto-data {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+}
+
+/* Стили для QR-генератора */
+#qr-result {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+#qr-image {
+    max-width: 250px;
+    border: 2px solid var(--primary-light);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.error {
+    color: var(--error);
+    display: none;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: rgba(208, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--error);
+}
+
+.loading {
+    display: none;
+    color: var(--primary);
+    margin: 1rem 0;
+    font-size: 1.1rem;
+}
+
+#download-btn {
+    margin-top: 1.5rem;
+    display: none;
+}
+
+/* Стили для главной страницы */
+.intro {
+    margin-bottom: 2rem;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background-color: #f8f8f8;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.cta {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+}
+
+/* Медиа-запросы для адаптации */
+@media (min-width: 600px) {
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    nav a {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 900px) {
+    .features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .container {
+        padding: 2rem;
+    }
+}
