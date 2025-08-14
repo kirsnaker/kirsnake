@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css\header.css">
+    <title>Калькулятор | Kirsnake</title>
+    <style>
+        /* Этот стиль только для позиционирования контейнера */
+        #calc-container {
+            margin: 20px auto;
+            width: fit-content;
+        }
+    </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">Kirsnake</a>
+      <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+          <button class="dropbtn">Генераторы</button>
+          <div class="dropdown-content">
+            <a href="qr.html">QR-генератор</a>
+            <a href="random.html">Генератор чисел</a>
+            <a href="passwords.html">Генератор паролей</a>
+          </div>
+        </div>
+        <a href="calculator.html">Калькулятор</a>
+        <a href="currency.html">Курсы валют</a>
+        <a href="weather.html">Погода</a>
+        <a href="ip.html">IP</a>
+      </nav>
+    </div>
+  </header>
+  <h2 style="text-align: center; margin-left: auto; margin-right: auto; width: fit-content;">
+    Калькулятор
+</h2>
+    <!-- Контейнер для Shadow DOM -->
+    <div id="calc-container"></div>
+
+    <script>
+        // Создаем Shadow Root с замкнутым режимом для полной изоляции
+        const calcContainer = document.getElementById('calc-container');
+        const shadowRoot = calcContainer.attachShadow({ mode: 'closed' });
+        
+        // Создаем стили для калькулятора
+        const style = document.createElement('style');
+        style.textContent = `
+            .orange-calculator {
+                width: 300px;
+                background: #000;
+                border-radius: 40px;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                overflow: hidden;
+            }
+            
+            .orange-display {
+                color: white;
+                font-size: 64px;
+                text-align: right;
+                padding: 20px 10px;
+                margin-bottom: 10px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .orange-buttons {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+            
+            .orange-btn {
+                width: 100%;
+                height: 68px;
+                border-radius: 50%;
+                border: none;
+                font-size: 32px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+            }
+            
+            .orange-btn:active {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+            
+            .light-gray {
+                background: #a5a5a5;
+                color: black;
+            }
+            
+            .dark-gray {
+                background: #333;
+                color: white;
+            }
+            
+            .orange {
+                background: #ff9f0a;
+                color: white;
+            }
+            
+            .zero {
+                grid-column: span 2;
+                border-radius: 34px !important;
+                justify-content: flex-start;
+                padding-left: 28px;
+            }
+        `;
+        
+        // Создаем HTML структуру калькулятора
+        const calculator = document.createElement('div');
+        calculator.className = 'orange-calculator';
+        calculator.innerHTML = `
+            <div class="orange-display" id="display">0</div>
+            <div class="orange-buttons">
+                <button class="orange-btn light-gray" data-action="clear">AC</button>
+                <button class="orange-btn light-gray" data-action="toggle">+/-</button>
+                <button class="orange-btn light-gray" data-action="percent">%</button>
+                <button class="orange-btn orange" data-action="divide">÷</button>
+                
+                <button class="orange-btn dark-gray" data-number="7">7</button>
+                <button class="orange-btn dark-gray" data-number="8">8</button>
+                <button class="orange-btn dark-gray" data-number="9">9</button>
+                <button class="orange-btn orange" data-action="multiply">×</button>
+                
+                <button class="orange-btn dark-gray" data-number="4">4</button>
+                <button class="orange-btn dark-gray" data-number="5">5</button>
+                <button class="orange-btn dark-gray" data-number="6">6</button>
+                <button class="orange-btn orange" data-action="subtract">−</button>
+                
+                <button class="orange-btn dark-gray" data-number="1">1</button>
+                <button class="orange-btn dark-gray" data-number="2">2</button>
+                <button class="orange-btn dark-gray" data-number="3">3</button>
+                <button class="orange-btn orange" data-action="add">+</button>
+                
+                <button class="orange-btn dark-gray zero" data-number="0">0</button>
+                <button class="orange-btn dark-gray" data-number=".">.</button>
+                <button class="orange-btn orange" data-action="equals">=</button>
+            </div>
+        `;
+        
+        // Добавляем стили и калькулятор в Shadow DOM
+        shadowRoot.appendChild(style);
+        shadowRoot.appendChild(calculator);
+        
+        // Логика калькулятора
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let resetInput = false;
+        
+        const display = shadowRoot.querySelector('#display');
+        
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+        
+        function clearCalculator() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            resetInput = false;
+            updateDisplay();
+        }
+        
+        function handleNumberClick(number) {
+            if (currentInput === '0' || resetInput) {
+                currentInput = number;
+                resetInput = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+        
+        function handleDecimal() {
+            if (resetInput) {
+                currentInput = '0.';
+                resetInput = false;
+                updateDisplay();
+                return;
+            }
+            
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+        
+        function toggleSign() {
+            currentInput = (parseFloat(currentInput) * -1).toString();
+            updateDisplay();
+        }
+        
+        function calculatePercentage() {
+            currentInput = (parseFloat(currentInput) / 100).toString();
+            updateDisplay();
+        }
+        
+        function setOperation(op) {
+            if (operation !== null) calculate();
+            previousInput = currentInput;
+            operation = op;
+            resetInput = true;
+        }
+        
+        function calculate() {
+            if (operation === null) return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            switch (operation) {
+                case 'add': result = prev + current; break;
+                case 'subtract': result = prev - current; break;
+                case 'multiply': result = prev * current; break;
+                case 'divide': result = prev / current; break;
+                default: return;
+            }
+            
+            currentInput = result.toString();
+            operation = null;
+            resetInput = true;
+            updateDisplay();
+        }
+        
+        // Обработчики событий
+        shadowRoot.querySelectorAll('[data-number]').forEach(button => {
+            button.addEventListener('click', () => {
+                const number = button.getAttribute('data-number');
+                if (number === '.') {
+                    handleDecimal();
+                } else {
+                    handleNumberClick(number);
+                }
+            });
+        });
+        
+        shadowRoot.querySelector('[data-action="clear"]').addEventListener('click', clearCalculator);
+        shadowRoot.querySelector('[data-action="toggle"]').addEventListener('click', toggleSign);
+        shadowRoot.querySelector('[data-action="percent"]').addEventListener('click', calculatePercentage);
+        shadowRoot.querySelector('[data-action="equals"]').addEventListener('click', calculate);
+        
+        shadowRoot.querySelector('[data-action="add"]').addEventListener('click', () => setOperation('add'));
+        shadowRoot.querySelector('[data-action="subtract"]').addEventListener('click', () => setOperation('subtract'));
+        shadowRoot.querySelector('[data-action="multiply"]').addEventListener('click', () => setOperation('multiply'));
+        shadowRoot.querySelector('[data-action="divide"]').addEventListener('click', () => setOperation('divide'));
+        
+        // Инициализация
+        updateDisplay();
+    </script>
+    <script>
+// Блокировка зума, но разрешение скролла
+let lastTouchEnd = 0;
+let initialScale = 1;
+
+document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Блокируем мультитач (зум)
+    }
+}, { passive: false });
+
+document.addEventListener('touchend', function(event) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Блокируем двойной тап (зум)
+    }
+    lastTouchEnd = now;
+}, { passive: false });
+
+document.addEventListener('gesturestart', function(event) {
+    event.preventDefault(); // Блокируем жесты масштабирования (iOS)
+});
+</script>
+</body>
+</html>

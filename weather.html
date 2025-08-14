@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода | Kirsnake</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <style>
+        :root {
+            --primary: #4caf50;
+            --primary-light: #81c784;
+            --primary-dark: #388e3c;
+            --text: #2e7d32;
+            --error: #d32f2f;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        /* Стили для поиска */
+        .search-box {
+            display: flex;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        #city-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-light);
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        #search-btn {
+            padding: 0 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        #search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .autocomplete-items div:hover {
+            background-color: #f5f5f5;
+        }
+
+        .autocomplete-items div strong {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Стили для текущей погоды */
+        .weather-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .weather-info {
+            flex: 1;
+        }
+
+        .weather-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+        }
+
+        .weather-icon img {
+            width: 100px;
+            height: 100px;
+            display: none;
+        }
+
+        #city-name {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .temp {
+            font-size: 3rem;
+            font-weight: 300;
+            margin: 1rem 0;
+            color: var(--text);
+        }
+
+        .details {
+            margin-top: 1rem;
+        }
+
+        .params div {
+            margin: 0.5rem 0;
+        }
+
+        .params span:first-child {
+            color: var(--primary-dark);
+            font-weight: 500;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        /* Стили для прогноза */
+        .forecast-container {
+            margin-top: 2rem;
+        }
+
+        .forecast-container h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .forecast-day {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .forecast-date {
+            font-weight: 500;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-icon img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .forecast-temp {
+            margin: 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .max-temp {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .min-temp {
+            color: #666;
+            margin-left: 0.5rem;
+        }
+
+        .forecast-desc {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .forecast-details div {
+            font-size: 0.8rem;
+            margin: 0.3rem 0;
+        }
+
+        .forecast-details span {
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .weather-card {
+                flex-direction: column;
+            }
+            
+            .weather-icon {
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .forecast-days {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #search-btn {
+                padding: 0 12px;
+                min-width: 60px;
+                font-size: 0.9rem;
+            }
+            
+            .temp {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <a href="index.html" class="logo">Kirsnake</a>
+        <nav>
+            <a href="index.html">Главная</a>
+            <div class="dropdown">
+                <button class="dropbtn">Генераторы</button>
+                <div class="dropdown-content">
+                    <a href="qr.html">QR-генератор</a>
+                    <a href="random.html">Генератор чисел</a>
+                    <a href="passwords.html">Генератор паролей</a>
+                </div>
+            </div>
+            <a href="calculator.html">Калькулятор</a>
+            <a href="currency.html">Курсы валют</a>
+            <a href="weather.html">Погода</a>
+            <a href="ip.html">IP</a>
+        </nav>
+    </div>
+</header>
+<div class="container">
+    <h2>Погода</h2>
+    
+    <main>
+        <div class="search-box">
+            <input type="text" id="city-input" placeholder="Введите город..." autocomplete="off">
+            <button id="search-btn">Поиск</button>
+            <div class="autocomplete-items" id="autocomplete-items"></div>
+        </div>
+        
+        <div class="weather-card" id="weather-card">
+            <div class="weather-info">
+                <h2 id="city-name">Определяем ваше местоположение...</h2>
+                <div class="temp" id="temperature">--°C</div>
+                <div class="details">
+                    <div id="weather-description">Загружаем данные...</div>
+                    <div class="params">
+                        <div><span>Влажность:</span> <span id="humidity">--%</span></div>
+                        <div><span>Ветер:</span> <span id="wind">-- м/с</span></div>
+                        <div><span>Давление:</span> <span id="pressure">-- hPa</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="weather-icon">
+                <img id="weather-icon" src="" alt="Weather Icon">
+            </div>
+        </div>
+        
+        <div class="forecast-container" id="forecast-container">
+            <h3>Прогноз на 3 дня</h3>
+            <div class="forecast-days" id="forecast-days"></div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const apiKey = '5c4e560622e3fea9b550f65c9585945b';
+        const searchBtn = document.getElementById('search-btn');
+        const cityInput = document.getElementById('city-input');
+        const autocompleteItems = document.getElementById('autocomplete-items');
+        const forecastDays = document.getElementById('forecast-days');
+
+        // Популярные города России с регионами (для лучшего автодополнения)
+        const russianCities = [
+            "Москва, Россия",
+            "Санкт-Петербург, Россия",
+            "Новосибирск, Россия",
+            "Екатеринбург, Россия",
+            "Казань, Россия",
+            "Нижний Новгород, Россия",
+            "Челябинск, Россия",
+            "Самара, Россия",
+            "Омск, Россия",
+            "Ростов-на-Дону, Россия",
+            "Уфа, Россия",
+            "Красноярск, Россия",
+            "Пермь, Россия",
+            "Воронеж, Россия",
+            "Волгоград, Россия",
+            "Краснодар, Россия",
+            "Саратов, Россия",
+            "Тюмень, Россия",
+            "Тольятти, Россия",
+            "Ижевск, Россия"
+        ];
+
+        // Инициализация приложения
+        init();
+
+        function init() {
+            // Запрашиваем геолокацию сразу при загрузке
+            getLocationByGeolocation();
+            
+            // Настройка обработчиков событий
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            searchBtn.addEventListener('click', searchWeather);
+            
+            cityInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchWeather();
+                }
+            });
+            
+            cityInput.addEventListener('input', function() {
+                const input = cityInput.value.trim().toLowerCase();
+                autocompleteItems.innerHTML = '';
+                
+                if (input.length > 0) {
+                    const filteredCities = russianCities.filter(city => 
+                        city.toLowerCase().includes(input)
+                    );
+                    
+                    // Показываем только 5 наиболее релевантных вариантов
+                    filteredCities.slice(0, 5).forEach(city => {
+                        const item = document.createElement('div');
+                        
+                        // Выделяем совпадающую часть текста
+                        const matchStart = city.toLowerCase().indexOf(input);
+                        const matchEnd = matchStart + input.length;
+                        
+                        item.innerHTML = city.substring(0, matchStart) + 
+                                        '<strong>' + city.substring(matchStart, matchEnd) + '</strong>' + 
+                                        city.substring(matchEnd);
+                        
+                        item.addEventListener('click', function() {
+                            cityInput.value = city.split(',')[0].trim(); // Берем только название города
+                            autocompleteItems.innerHTML = '';
+                            searchWeather();
+                        });
+                        
+                        autocompleteItems.appendChild(item);
+                    });
+                    
+                    if (filteredCities.length > 0) {
+                        autocompleteItems.style.display = 'block';
+                    }
+                } else {
+                    autocompleteItems.style.display = 'none';
+                }
+            });
+            
+            // Скрываем автодополнение при клике вне поля
+            document.addEventListener('click', function(e) {
+                if (e.target !== cityInput) {
+                    autocompleteItems.style.display = 'none';
+                }
+            });
+        }
+
+        function getLocationByGeolocation() {
+            if (!navigator.geolocation) {
+                setDefaultCity();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // Сначала получаем название города по координатам
+                    fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`)
+                        .then(response => response.json())
+                        .then(locationData => {
+                            if (locationData && locationData.length > 0) {
+                                const city = locationData[0].name;
+                                cityInput.value = city;
+                                searchWeather();
+                            } else {
+                                setDefaultCity();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка получения города:', error);
+                            setDefaultCity();
+                        });
+                },
+                error => {
+                    console.error('Ошибка геолокации:', error);
+                    setDefaultCity();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        function setDefaultCity() {
+            cityInput.value = 'Москва';
+            searchWeather();
+        }
+
+        function searchWeather() {
+            const city = cityInput.value.trim();
+            if (city === '') return;
+            
+            // Показываем состояние загрузки
+            document.getElementById('city-name').textContent = `Загружаем данные для ${city}...`;
+            document.getElementById('weather-description').textContent = 'Пожалуйста, подождите...';
+            document.getElementById('forecast-days').innerHTML = '<div class="loading">Загрузка прогноза...</div>';
+            
+            // Запрос текущей погоды
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}&lang=ru`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Город не найден');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayWeather(data);
+                    // После получения текущей погоды запрашиваем прогноз
+                    return fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}&lang=ru`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Прогноз не доступен');
+                    }
+                    return response.json();
+                })
+                .then(forecastData => {
+                    displayForecast(forecastData);
+                })
+                .catch(error => {
+                    document.getElementById('city-name').textContent = 'Ошибка загрузки';
+                    document.getElementById('weather-description').textContent = error.message;
+                    document.getElementById('forecast-days').innerHTML = '<div class="error">Не удалось загрузить прогноз</div>';
+                    console.error('Ошибка:', error);
+                });
+        }
+
+        function displayWeather(data) {
+            const cityName = document.getElementById('city-name');
+            const temperature = document.getElementById('temperature');
+            const weatherDesc = document.getElementById('weather-description');
+            const humidity = document.getElementById('humidity');
+            const wind = document.getElementById('wind');
+            const pressure = document.getElementById('pressure');
+            const weatherIcon = document.getElementById('weather-icon');
+            
+            cityName.textContent = data.name;
+            temperature.textContent = `${Math.round(data.main.temp)}°C`;
+            weatherDesc.textContent = data.weather[0].description;
+            humidity.textContent = `${data.main.humidity}%`;
+            wind.textContent = `${data.wind.speed} м/с`;
+            pressure.textContent = `${data.main.pressure} hPa`;
+            
+            const iconCode = data.weather[0].icon;
+            weatherIcon.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+            weatherIcon.alt = data.weather[0].description;
+            weatherIcon.style.display = 'block';
+        }
+        
+        function displayForecast(data) {
+            forecastDays.innerHTML = '';
+            
+            // Группируем прогноз по дням
+            const dailyForecast = {};
+            const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                const dayKey = date.toLocaleDateString();
+                
+                if (!dailyForecast[dayKey]) {
+                    dailyForecast[dayKey] = {
+                        date: date,
+                        temps: [],
+                        icons: [],
+                        descriptions: [],
+                        humidity: [],
+                        wind: []
+                    };
+                }
+                
+                dailyForecast[dayKey].temps.push(item.main.temp);
+                dailyForecast[dayKey].icons.push(item.weather[0].icon);
+                dailyForecast[dayKey].descriptions.push(item.weather[0].description);
+                dailyForecast[dayKey].humidity.push(item.main.humidity);
+                dailyForecast[dayKey].wind.push(item.wind.speed);
+            });
+            
+            // Получаем ключи дней (даты) и сортируем их
+            const sortedDays = Object.keys(dailyForecast).sort();
+            
+            // Ограничиваем вывод 3 днями (сегодня + 2 следующих)
+            const forecastToShow = sortedDays.slice(0, 3);
+            
+            forecastToShow.forEach(dayKey => {
+                const dayData = dailyForecast[dayKey];
+                const date = dayData.date;
+                const dayName = daysOfWeek[date.getDay()];
+                
+                // Рассчитываем средние/минимальные/максимальные значения
+                const avgTemp = dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length;
+                const minTemp = Math.min(...dayData.temps);
+                const maxTemp = Math.max(...dayData.temps);
+                
+                // Находим наиболее часто встречающуюся иконку
+                const iconCounts = {};
+                dayData.icons.forEach(icon => {
+                    iconCounts[icon] = (iconCounts[icon] || 0) + 1;
+                });
+                const mostCommonIcon = Object.keys(iconCounts).reduce((a, b) => 
+                    iconCounts[a] > iconCounts[b] ? a : b
+                );
+                
+                // Находим наиболее часто встречающееся описание
+                const descCounts = {};
+                dayData.descriptions.forEach(desc => {
+                    descCounts[desc] = (descCounts[desc] || 0) + 1;
+                });
+                const mostCommonDesc = Object.keys(descCounts).reduce((a, b) => 
+                    descCounts[a] > descCounts[b] ? a : b
+                );
+                
+                // Создаем элемент прогноза
+                const forecastDay = document.createElement('div');
+                forecastDay.className = 'forecast-day';
+                
+                forecastDay.innerHTML = `
+                    <div class="forecast-date">${dayName}, ${date.getDate()} ${getMonthName(date.getMonth())}</div>
+                    <div class="forecast-icon">
+                        <img src="https://openweathermap.org/img/wn/${mostCommonIcon}.png" alt="${mostCommonDesc}">
+                    </div>
+                    <div class="forecast-temp">
+                        <span class="max-temp">${Math.round(maxTemp)}°</span>
+                        <span class="min-temp">${Math.round(minTemp)}°</span>
+                    </div>
+                    <div class="forecast-desc">${mostCommonDesc}</div>
+                    <div class="forecast-details">
+                        <div><span>Влажность:</span> ${Math.round(dayData.humidity.reduce((a, b) => a + b, 0) / dayData.humidity.length)}%</div>
+                        <div><span>Ветер:</span> ${Math.round(dayData.wind.reduce((a, b) => a + b, 0) / dayData.wind.length)} м/с</div>
+                    </div>
+                `;
+                
+                forecastDays.appendChild(forecastDay);
+            });
+        }
+        
+        function getMonthName(monthIndex) {
+            const months = [
+                'янв', 'фев', 'мар', 'апр', 'май', 'июн',
+                'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'
+            ];
+            return months[monthIndex];
+        }
+    });
+</script>
+</body>
+</html>

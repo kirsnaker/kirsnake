@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ошибка 404 — Страница не найдена</title>
+  <style>
+    :root {
+      --primary: #4caf50;
+      --primary-light: #81c784;
+      --primary-dark: #388e3c;
+      --text: #2e7d32;
+      --error: #d32f2f;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+      background-color: white;
+      line-height: 1.6;
+    }
+
+    header {
+      background-color: var(--primary);
+      padding: 1rem;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      color: white;
+      text-decoration: none;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 5px;
+      align-items: center;
+    }
+
+    nav a, .dropbtn {
+      color: white;
+      padding: 8px 12px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+    }
+
+    nav a:hover, .dropbtn:hover {
+      text-decoration: underline;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropbtn::after {
+      content: "▼";
+      font-size: 0.6rem;
+      margin-left: 5px;
+      position: relative;
+      top: -1px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--primary-dark);
+      min-width: 160px;
+      z-index: 100;
+      border-radius: 0 0 4px 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      padding: 0.8rem 1.2rem;
+      display: block;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .dropdown-content a:hover {
+      background: var(--primary);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #2e7d32;
+    }
+
+    p {
+      font-size: 1.1rem;
+    }
+
+    a.return-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    @media (min-width: 769px) {
+      .header-content {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .logo {
+        margin-bottom: 0;
+        margin-right: 2rem;
+      }
+
+      nav {
+        justify-content: flex-start;
+        flex-grow: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="logo">Kirsnake</a>
+      <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+          <button class="dropbtn">Генераторы</button>
+          <div class="dropdown-content">
+            <a href="qr.html">QR-генератор</a>
+            <a href="random.html">Генератор чисел</a>
+            <a href="passwords.html">Генератор паролей</a>
+          </div>
+        </div>
+        <a href="calculator.html">Калькулятор</a>
+        <a href="currency.html">Курсы валют</a>
+        <a href="weather.html">Погода</a>
+        <a href="ip.html">IP</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Ошибка 404 — Страница не найдена</h2>
+    <p>К сожалению, запрошенная страница не существует или была перемещена.</p>
+    <a href="index.html" class="return-link">Вернуться на главную</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер изображений | Kirsnake</title>
+    <style>
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+
+        .upload-area:hover {
+            background: #f0f8ff;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview {
+            margin-top: 15px;
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        select, button {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Kirsnake</h1>
+    <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+            <button class="dropbtn">Генераторы</button>
+            <div class="dropdown-content">
+                <a href="qr.html">QR-генератор</a>
+                <a href="random.html">Генератор чисел</a>
+                <a href="passwords.html">Генератор паролей</a>
+            </div>
+        </div>
+        <a href="calculator.html">Калькулятор</a>
+        <a href="currency.html">Курсы валют</a>
+        <a href="weather.html">Погода</a>
+        <a href="ip.html">IP</a>
+    </nav>
+</header>
+    <div class="container">
+        <h2>Конвертер изображений</h2>
+        <p>Преобразуйте изображения между форматами WebP, PNG и JPG</p>
+        
+        <div class="converter-box">
+            <div class="upload-area" id="dropArea">
+                <input type="file" id="fileInput" accept="image/webp,image/png,image/jpeg">
+                <p>Перетащите изображение сюда или кликните для выбора</p>
+                <div class="preview" id="preview"></div>
+            </div>
+            
+            <div class="options">
+                <label for="format">Преобразовать в:</label>
+                <select id="format">
+                    <option value="png">PNG</option>
+                    <option value="jpeg">JPG</option>
+                    <option value="webp">WebP</option>
+                </select>
+                
+                <div id="qualityContainer" style="display: none;">
+                    <label for="quality">Качество (для JPG/WebP):</label>
+                    <input type="range" id="quality" min="1" max="100" value="80">
+                    <span id="qualityValue">80%</span>
+                </div>
+                
+                <button id="convertBtn">Конвертировать</button>
+                <button id="downloadBtn" disabled>Скачать</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const dropArea = document.getElementById('dropArea');
+            const preview = document.getElementById('preview');
+            const formatSelect = document.getElementById('format');
+            const qualityInput = document.getElementById('quality');
+            const qualityValue = document.getElementById('qualityValue');
+            const qualityContainer = document.getElementById('qualityContainer');
+            const convertBtn = document.getElementById('convertBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            let originalFile = null;
+            let convertedBlob = null;
+            
+            // Обработчики для drag and drop
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.background = '#f0f8ff';
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.background = '';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.background = '';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    handleFile(fileInput.files[0]);
+                }
+            });
+            
+            formatSelect.addEventListener('change', () => {
+                const format = formatSelect.value;
+                qualityContainer.style.display = (format === 'jpeg' || format === 'webp') ? 'block' : 'none';
+            });
+            
+            qualityInput.addEventListener('input', () => {
+                qualityValue.textContent = `${qualityInput.value}%`;
+            });
+            
+            convertBtn.addEventListener('click', convertImage);
+            downloadBtn.addEventListener('click', downloadImage);
+            
+            function handleFile(file) {
+                const validTypes = ['image/webp', 'image/png', 'image/jpeg'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Пожалуйста, выберите изображение в формате WebP, PNG или JPG');
+                    return;
+                }
+                
+                originalFile = file;
+                preview.innerHTML = '';
+                
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onload = () => {
+                    URL.revokeObjectURL(img.src);
+                };
+                preview.appendChild(img);
+                
+                // Автоматически выбираем другой формат
+                const currentFormat = file.type.split('/')[1];
+                if (currentFormat === 'webp') {
+                    formatSelect.value = 'png';
+                } else if (currentFormat === 'png') {
+                    formatSelect.value = 'jpeg';
+                } else {
+                    formatSelect.value = 'webp';
+                }
+                
+                convertBtn.disabled = false;
+                downloadBtn.disabled = true;
+            }
+            
+            function convertImage() {
+                if (!originalFile) return;
+                
+                const format = formatSelect.value;
+                const quality = qualityInput.value / 100;
+                
+                const img = new Image();
+                img.src = URL.createObjectURL(originalFile);
+                
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    canvas.toBlob((blob) => {
+                        convertedBlob = blob;
+                        downloadBtn.disabled = false;
+                        
+                        // Показываем превью конвертированного изображения
+                        preview.innerHTML = '';
+                        const convertedImg = document.createElement('img');
+                        convertedImg.src = URL.createObjectURL(blob);
+                        preview.appendChild(convertedImg);
+                        
+                        alert('Изображение успешно конвертировано!');
+                    }, `image/${format}`, quality);
+                    
+                    URL.revokeObjectURL(img.src);
+                };
+            }
+            
+            function downloadImage() {
+                if (!convertedBlob) return;
+                
+                const url = URL.createObjectURL(convertedBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                const originalName = originalFile.name.split('.')[0];
+                const format = formatSelect.value;
+                a.download = `${originalName}_converted.${format}`;
+                
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        });
+    </script>
+</body>
+</html>

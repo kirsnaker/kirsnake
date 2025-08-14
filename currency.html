@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Курсы валют | Kirsnake</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <script src="js/currency.js" defer></script>
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <a href="index.html" class="logo">Kirsnake</a>
+        <nav>
+            <a href="index.html">Главная</a>
+            <div class="dropdown">
+                <button class="dropbtn">Генераторы</button>
+                <div class="dropdown-content">
+                    <a href="qr.html">QR-генератор</a>
+                    <a href="random.html">Генератор чисел</a>
+                    <a href="passwords.html">Генератор паролей</a>
+                </div>
+            </div>
+            <a href="calculator.html">Калькулятор</a>
+            <a href="currency.html">Курсы валют</a>
+            <a href="weather.html">Погода</a>
+            <a href="ip.html">IP</a>
+        </nav>
+    </div>
+</header>
+
+    <div class="container">
+        <h2>Курсы криптовалют</h2>
+        <div class="input-group">
+            <select id="crypto">
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+                <option value="ripple">Ripple (XRP)</option>
+                <option value="dogecoin">Dogecoin (DOGE)</option>
+            </select>
+            <select id="currency">
+                <option value="usd">USD</option>
+                <option value="eur">EUR</option>
+                <option value="rub">RUB</option>
+            </select>
+            <button id="fetch-rates">Показать курс</button>
+        </div>
+        <div id="crypto-data"></div>
+    </div>
+    
+<script>
+// Блокировка зума, но разрешение скролла
+let lastTouchEnd = 0;
+let initialScale = 1;
+
+document.addEventListener('touchstart', function(event) {
+    if (event.touches.length > 1) {
+        event.preventDefault(); // Блокируем мультитач (зум)
+    }
+}, { passive: false });
+
+document.addEventListener('touchend', function(event) {
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault(); // Блокируем двойной тап (зум)
+    }
+    lastTouchEnd = now;
+}, { passive: false });
+
+document.addEventListener('gesturestart', function(event) {
+    event.preventDefault(); // Блокируем жесты масштабирования (iOS)
+});
+</script>
+
+</body>
+</html>
