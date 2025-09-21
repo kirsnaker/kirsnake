@@ -179,4 +179,80 @@
                 flex-grow: 1;
             }
         }
+
+/* ЖЕСТКИЙ ФИКС ДЛЯ ДЕСКТОПОВ - ЧТОБЫ НИЧЕГО НЕ СЪЕЗЖАЛО */
+@media (min-width: 769px) {
+    /* Фиксированная высота шапки */
+    header {
+        padding: 0 !important;
+        height: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .header-content {
+        height: 60px !important;
+        min-height: 60px !important;
+        padding: 0 1rem !important;
+    }
+    
+    /* Логотип - фиксированная высота и выравнивание */
+    .logo {
+        margin: 0 !important;
+        padding: 0 !important;
+        margin-right: 2rem !important;
+        height: 60px !important;
+        line-height: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+        font-size: 1.8rem !important;
+    }
+    
+    /* Навигация - фиксированная высота */
+    nav {
+        height: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0 !important;
+    }
+    
+    /* Ссылки и кнопки - одинаковый размер */
+    nav a, .dropbtn {
+        margin: 0 !important;
+        padding: 0 15px !important;
+        height: 60px !important;
+        line-height: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-decoration: none !important;
+        min-width: 80px !important;
+    }
+    
+    nav a:hover, .dropbtn:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        text-decoration: none !important;
+    }
+    
+    /* Выпадающее меню - позиционирование */
+    .dropdown {
+        height: 60px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .dropdown-content {
+        top: 60px !important;
+    }
+    
+    /* Гарантия что ничего не сдвинет контент */
+    .container {
+        margin-top: 2rem !important;
+    }
+}
+
+/* Дополнительная защита от скачков */
+body {
+    overflow-y: scroll !important;
+}
     
